@@ -19,6 +19,10 @@ public class InMemoryUserStorage implements UserStorage {
     public Integer generateId() {
         return ++userId;
     }
+    @Override
+    public void deleteUser(int id) {
+        users.remove(id);
+    }
 
     @Override
     public void addUser(User user) {

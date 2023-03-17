@@ -1,19 +1,25 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class Film {
-    private final String name;
-    private final String description;
-    private final LocalDate releaseDate;
-    private final int duration;
-    private int id;
-    private Set<Long> likes = new HashSet<>();
+    String name;
+    String description;
+    LocalDate releaseDate;
+    int duration;
+    @NonFinal
+    int id;
+    @NonFinal
+    Set<Long> likes = new HashSet<>();
 
     public void addLike(long userId) {
         likes.add(userId);

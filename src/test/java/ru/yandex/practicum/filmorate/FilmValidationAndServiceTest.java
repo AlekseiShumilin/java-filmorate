@@ -56,6 +56,15 @@ class FilmValidationAndServiceTest {
         assertEquals(filmController.filmStorage.getFilm(2), film1);
         assertEquals(filmController.getAllFilms().size(), 2);
     }
+    @Test
+    void deleteFilm(){
+        film1 = new Film("Film1", "Film1 description",
+                LocalDate.of(2000, 10, 1), 120);
+        filmController.addFilm(film1);
+        filmStorage.deleteFilm(1);
+        assertTrue(filmStorage.getAllFilms().isEmpty());
+
+    }
 
     @Test
     void addFilmEmptyName() {

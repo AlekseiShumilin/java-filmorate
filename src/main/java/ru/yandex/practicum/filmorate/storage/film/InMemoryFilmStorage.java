@@ -20,6 +20,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Integer generateId() {
         return ++filmId;
     }
+    @Override
+    public void deleteFilm(int id){
+        films.remove(id);
+    }
 
     @Override
     public void addFilm(Film film) {

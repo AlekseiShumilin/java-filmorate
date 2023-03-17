@@ -43,6 +43,14 @@ public class UserValidationAndServiceTest {
         assertEquals(user1, userController.getUserById(2));
         assertEquals(userController.getAllUsers().size(), 2);
     }
+    @Test
+    void deleteUser(){
+        user1 = new User("User1", "user1@mail.ru", "loginUser1",
+                LocalDate.of(1987, 1, 1));
+        userController.addUser(user1);
+        userStorage.deleteUser(1);
+        assertTrue(userStorage.getAllUsers().isEmpty());
+    }
 
     @Test
     void createUserWrongLogin() {
