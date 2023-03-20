@@ -6,10 +6,11 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+
 @Slf4j
 @Component
 public class FilmValidator {
-   public void validateFilm(Film film) {
+    public void validateFilm(Film film) {
         if (film == null) {
             log.info("addFilm {}. Film is null", film);
             throw new ValidationException("Film is null");
