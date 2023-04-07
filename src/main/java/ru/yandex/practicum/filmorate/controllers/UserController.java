@@ -48,7 +48,12 @@ public class UserController {
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable int userId) {
         log.info("get user {}.", userId);
-        return userService.getUserById(userId);
+        Optional<User> user = userStorage.getUser(userId);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("Пользователь с id " + userId + " не найден.");
+        } else {
+            return user.get();
+        }
     }
 
     @GetMapping("/{userId}/friends")
