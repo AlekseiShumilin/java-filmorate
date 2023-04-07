@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.FilmService;
@@ -35,8 +36,12 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         log.info("updateFilm {}.", film);
-        filmStorage.updateFilm(film);
-        return film;
+        Optional<Film> filmUpdated = filmStorage.updateFilm(film);
+        if(filmUpdated.isEmpty()) {
+            throw new FilmNotFoundException("Фильм с id " + film.getId() + " не найден.");
+        } else {
+            return filmUpdated.get();
+        }
     }
 
     @GetMapping
@@ -59,17 +64,23 @@ public class FilmController {
 
     @GetMapping("/popular")
     public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10", required = false) int count) {
+        log.info("get {} most popular films", count);
         if (count <= 0) {
             throw new IncorrectParameterException("count", "Parameter count should be higher than 0.");
         } else {
-            return filmService.getMostPopularFilms(count);
+            return filmStorage.getMostPopularFilm(count);
         }
     }
 
     @GetMapping("/{filmId}")
     public Film getFilmById(@PathVariable int filmId) {
         log.info("get film {}.", filmId);
-        return filmStorage.getFilm(filmId);
+        Optional<Film> film = filmStorage.getFilm(filmId);
+        if (film.isEmpty()) {
+            throw new FilmNotFoundException("Фильм с id " + filmId + " не найден.");
+        }
+        return film.get();
 
     }
+
 }

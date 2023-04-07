@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,8 +17,20 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Integer generateId() {
         return ++filmId;
     }
+
     @Override
-    public void deleteFilm(int id){
+    public void likeFilm(int filmId, int userId) {
+        films.get(filmId).addLike(userId);
+    }
+
+    @Override
+    public void unlikeFilm(int filmId, int userId) {
+        films.get(filmId).removeLike(userId);
+
+    }
+
+    @Override
+    public void deleteFilm(int id) {
         films.remove(id);
     }
 
@@ -32,13 +41,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void updateFilm(Film film) {
+    public Optional<Film> updateFilm(Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
         } else {
             log.info("filmUpdate {}. Film with id " + film.getId() + "is not exist.", film);
             throw new FilmNotFoundException("Film with id " + film.getId() + "is not exist.");
         }
+        return Optional.of(films.get(film.getId()));
     }
 
     @Override
@@ -47,18 +57,19 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(Integer id) {
+    public Optional<Film> getFilm(Integer id) {
         if (!films.containsKey(id)) {
             throw new FilmNotFoundException("Film with id " + id + " not found.");
         } else {
-            return films.get(id);
+            return Optional.of(films.get(id));
         }
     }
+
 
     @Override
     public List<Film> getMostPopularFilm(int count) {
         return films.values().stream().sorted((f0, f1) -> f1.getLikes().size() - f0.getLikes()
-                .size())
+                        .size())
                 .limit(count)
                 .collect(Collectors.toList());
     }
