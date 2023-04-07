@@ -5,34 +5,26 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Data
-@FieldDefaults(level= AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     Integer id;
-    final String email;
-    final String login;
+    String email;
+    String login;
     String name;
-    Set<Integer> friends = new HashSet<>();
+    LocalDate birthday;
+    List<User> friends;
 
     public User(String name, String email, String login, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;
         this.birthday = birthday;
-    }
-
-    private final LocalDate birthday;
-
-    public void addFriend(Integer friendId) {
-        this.friends.add(friendId);
-    }
-
-    public void removeFriend(Integer friendId) {
-        this.friends.remove(friendId);
+        this.friends = new ArrayList<>();
     }
 
     @Override
