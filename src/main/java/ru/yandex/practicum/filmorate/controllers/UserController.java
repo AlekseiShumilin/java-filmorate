@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.services.UserService;
 import ru.yandex.practicum.filmorate.services.UserValidator;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -36,7 +38,12 @@ public class UserController {
     public User updateUser(@RequestBody User user) {
         log.info("updateUser {}.", user);
         userStorage.updateUser(user);
-        return user;
+        Optional<User> updatedUser = userStorage.getUser(user.getId());
+        if (updatedUser.isEmpty()) {
+            throw new UserNotFoundException("Пользователь с id " + user.getId() + " не найден");
+        } else {
+            return updatedUser.get();
+        }
     }
 
     @GetMapping
@@ -48,7 +55,12 @@ public class UserController {
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable int userId) {
         log.info("get user {}.", userId);
-        return userService.getUserById(userId);
+        Optional<User> user = userStorage.getUser(userId);
+        if(user.isEmpty()) {
+            throw new UserNotFoundException("Пользователь с id " + userId + " не найден.");
+        } else {
+            return user.get();
+        }
     }
 
     @GetMapping("/{userId}/friends")
@@ -60,13 +72,13 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("user {} add friend user {}.", id, friendId);
-        userService.addFriend(id, friendId);
+        userStorage.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("user {} remove friend user {}.", id, friendId);
-        userService.removeFriend(id, friendId);
+        userStorage.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{userId}/friends/common/{otherId}")
