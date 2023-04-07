@@ -1,12 +1,15 @@
 package ru.yandex.practicum.filmorate.services;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class FilmService {
@@ -19,22 +22,26 @@ public class FilmService {
     }
 
     public void likeFilm(int filmId, int userId) {
-        if (userStorage.getUser(userId) != null) {
-            filmStorage.getFilm(filmId).addLike(userId);
-        } else {
-            throw new UserNotFoundException("User with id " + userId + " is not exist.");
+        Optional<User> user = userStorage.getUser(userId);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("Пользователь с id " + userId + " не найден");
         }
+        Optional<Film> film = filmStorage.getFilm(filmId);
+        if(film.isEmpty()) {
+            throw new FilmNotFoundException("Фильм с id " + filmId + " не найден");
+        }
+        filmStorage.likeFilm(filmId, userId);
     }
 
     public void unlikeFilm(int filmId, int userId) {
-        if (userStorage.getUser(userId) != null) {
-            filmStorage.getFilm(filmId).removeLike(userId);
-        } else {
-            throw new UserNotFoundException("User with id " + userId + " is not exist.");
+        Optional<User> user = userStorage.getUser(userId);
+        if(user.isEmpty()) {
+            throw new FilmNotFoundException("Пользователь с id " + userId + " не найден");
         }
-    }
-
-    public List<Film> getMostPopularFilms(int count) {
-        return filmStorage.getMostPopularFilm(count);
+        Optional<Film> film = filmStorage.getFilm(filmId);
+        if(film.isEmpty()) {
+            throw new FilmNotFoundException("Фильм с id " + filmId + " не найден");
+        }
+        filmStorage.unlikeFilm(filmId, userId);
     }
 }
