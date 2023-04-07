@@ -37,7 +37,7 @@ public class FilmController {
     public Film updateFilm(@RequestBody Film film) {
         log.info("updateFilm {}.", film);
         Optional<Film> filmUpdated = filmStorage.updateFilm(film);
-        if(filmUpdated.isEmpty()) {
+        if (filmUpdated.isEmpty()) {
             throw new FilmNotFoundException("Фильм с id " + film.getId() + " не найден.");
         } else {
             return filmUpdated.get();
