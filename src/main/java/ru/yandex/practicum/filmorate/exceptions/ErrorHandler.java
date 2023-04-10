@@ -32,8 +32,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleUserAlreadyExistException(final UserAlreadyExistException e) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleGenreNotFoundException(final GenreNotFoundException e) {
         return new ErrorResponse(
                 e.getMessage()
         );
@@ -41,9 +49,10 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleNoFriendsException(final NoFriendsException e) {
+    public ErrorResponse handleUserAlreadyExistException(final UserAlreadyExistException e) {
         return new ErrorResponse(
                 e.getMessage()
         );
     }
+
 }

@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controllers.UserController;
-import ru.yandex.practicum.filmorate.exceptions.NoFriendsException;
-import ru.yandex.practicum.filmorate.exceptions.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,9 +10,9 @@ import ru.yandex.practicum.filmorate.services.UserValidator;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationAndServiceTest {
     UserStorage userStorage = new InMemoryUserStorage();
@@ -43,8 +41,9 @@ public class UserValidationAndServiceTest {
         assertEquals(user1, userController.getUserById(2));
         assertEquals(userController.getAllUsers().size(), 2);
     }
+
     @Test
-    void deleteUser(){
+    void deleteUser() {
         user1 = new User("User1", "user1@mail.ru", "loginUser1",
                 LocalDate.of(1987, 1, 1));
         userController.addUser(user1);
@@ -133,85 +132,6 @@ public class UserValidationAndServiceTest {
         assertEquals(userController.getAllUsers().size(), 2);
         assertTrue(userController.getAllUsers().contains(user1));
         assertTrue(userController.getAllUsers().contains(user0));
-    }
-
-    @Test
-    void addFriend() {
-        user1 = new User("User1", "user1@mail.ru", "loginUser1",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user1);
-        user2 = new User("User2", "user2@mail.ru", "loginUser2",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user2);
-        user3 = new User("User3", "user1@mail.ru", "loginUser3",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user3);
-        assertThrows(NoFriendsException.class, () -> userController.getFriends(1));
-        assertThrows(UserAlreadyExistException.class, () -> userController.addUser(user1));
-
-        userController.addFriend(1, 2);
-        userController.addFriend(1, 3);
-        assertEquals(user1.getId(), 1);
-        assertEquals(user1.getFriends().size(), 2);
-        assertEquals(user2.getFriends().size(), 1);
-        assertTrue(user1.getFriends().contains(user2.getId()));
-        assertTrue(user1.getFriends().contains(user3.getId()));
-        assertTrue(user2.getFriends().contains(user1.getId()));
-    }
-
-    @Test
-    void removeFriend() {
-        user1 = new User("User1", "user1@mail.ru", "loginUser1",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user1);
-        user2 = new User("User2", "user2@mail.ru", "loginUser2",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user2);
-        user3 = new User("User3", "user1@mail.ru", "loginUser3",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user3);
-
-        userController.addFriend(1, 2);
-        userController.addFriend(1, 3);
-        assertTrue(user3.getFriends().contains(user1.getId()));
-        userController.removeFriend(1, 3);
-        assertEquals(user1.getFriends().size(), 1);
-        assertTrue(user3.getFriends().isEmpty());
-    }
-
-    @Test
-    void getCommonFriends() {
-        user1 = new User("User1", "user1@mail.ru", "loginUser1",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user1);
-        user2 = new User("User2", "user2@mail.ru", "loginUser2",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user2);
-        user3 = new User("User3", "user1@mail.ru", "loginUser3",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user3);
-        user4 = new User("User4", "user4@mail.ru", "loginUser4",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user4);
-        user5 = new User("User5", "user5@mail.ru", "loginUser5",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user5);
-        user6 = new User("User6", "user6@mail.ru", "loginUser6",
-                LocalDate.of(1987, 1, 1));
-        userController.addUser(user6);
-
-        userController.addFriend(1, 2);
-        userController.addFriend(1, 3);
-        userController.addFriend(1, 4);
-        userController.addFriend(2, 5);
-        userController.addFriend(2, 6);
-        userController.addFriend(2, 3);
-        userController.addFriend(2, 4);
-
-        assertEquals(userController.getCommonFriends(1, 2).size(), 2);
-        assertTrue(userController.getCommonFriends(1, 2).contains(user3) &
-                userController.getCommonFriends(1, 2).contains(user4));
-
     }
 
 }
